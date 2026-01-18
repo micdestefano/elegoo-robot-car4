@@ -1,0 +1,206 @@
+diff -uN "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/CameraWebServer_AP.cpp" /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120_conn_to_router/CameraWebServer_AP.cpp
+--- "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/CameraWebServer_AP.cpp"	2022-01-21 16:48:28.000000000 +0100
++++ /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120_conn_to_router/CameraWebServer_AP.cpp	2026-01-18 21:09:05.136832592 +0100
+@@ -1,3 +1,7 @@
++/*
++ * NOTE: Modified by Michele De Stefano.
++ * Modifications marked with the MDS flag in comments.
++ */
+ 
+ // WARNING!!! Make sure that you have selected Board ---> ESP32 Dev Module
+ //            Partition Scheme ---> Huge APP (3MB No OTA/1MB SPIFFS)
+@@ -123,11 +127,14 @@
+   wifi_name = mac0_default + mac1_default;
+ 
+   WiFi.setTxPower(WIFI_POWER_19_5dBm);
+-  WiFi.mode(WIFI_AP);
+-  WiFi.softAP(mac_default, password, 9);
++  // MDS: Removed access-point WiFi mode
++  // WiFi.mode(WIFI_AP);
++  // WiFi.softAP(mac_default, password, 9);
++  WiFi.begin(ssid,password); // MDS: Now connecting to the router
+   startCameraServer();
+ 
+   Serial.print("Camera Ready! Use 'http://");
+-  Serial.print(WiFi.softAPIP());
++  // Serial.print(WiFi.softAPIP()); // MDS: Commented this line
++  Serial.print(WiFi.getHostname()); // MDS: Tried this one (not sure)
+   Serial.println("' to connect");
+ }
+diff -uN "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/CameraWebServer_AP.h" /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120_conn_to_router/CameraWebServer_AP.h
+--- "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/CameraWebServer_AP.h"	2021-03-16 17:19:12.000000000 +0100
++++ /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120_conn_to_router/CameraWebServer_AP.h	1970-01-01 01:00:00.000000000 +0100
+@@ -1,30 +0,0 @@
+-/*
+- * @Descripttion: 
+- * @version: 
+- * @Author: Elegoo
+- * @Date: 2020-06-04 11:42:27
+- * @LastEditors: Changhua
+- * @LastEditTime: 2020-07-23 14:21:48
+- */
+-
+-#ifndef _CameraWebServer_AP_H
+-#define _CameraWebServer_AP_H
+-#include "esp_camera.h"
+-#include <WiFi.h>
+-
+-class CameraWebServer_AP
+-{
+-
+-public:
+-  void CameraWebServer_AP_Init(void);
+-  String wifi_name;
+-
+-private:
+-  // const char *ssid = "ESP32_CAM";
+-  // const char *password = "elegoo2020";
+-  char *ssid = "ELEGOO-";
+-  //char *password = "elegoo2020";
+-  char *password = "";
+-};
+-
+-#endif
+diff -uN "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/CameraWebServer_AP.h.source" /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120_conn_to_router/CameraWebServer_AP.h.source
+--- "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/CameraWebServer_AP.h.source"	1970-01-01 01:00:00.000000000 +0100
++++ /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120_conn_to_router/CameraWebServer_AP.h.source	2026-01-18 21:11:25.732471367 +0100
+@@ -0,0 +1,46 @@
++/*
++ * @Descripttion: 
++ * @version: 
++ * @Author: Elegoo, modified by Michele De Stefano
++ * @Date: 2020-06-04 11:42:27
++ * @LastEditors: Changhua
++ * @LastEditTime: 2020-07-23 14:21:48
++ */
++
++/*
++ * NOTE: Modified by Michele De Stefano.
++ * Modifications marked with the MDS flag in comments.
++ */
++
++/*
++ * Note by Michele De Stefano:
++ * ===========================
++ *
++ * DON'T MANUALLY MODIFY IT! IT IS MEANT TO BE HANDLED BY RUNNING
++ *
++ *   make config
++ *
++ * FROM THE ROOT DIRECTORY OF THE PROJECT.
++ */
++
++#ifndef _CameraWebServer_AP_H
++#define _CameraWebServer_AP_H
++#include "esp_camera.h"
++#include <WiFi.h>
++
++class CameraWebServer_AP
++{
++
++public:
++  void CameraWebServer_AP_Init(void);
++  String wifi_name;
++
++private:
++  // const char *ssid = "ESP32_CAM";
++  // const char *password = "elegoo2020";
++  // NOTE: DON'T MODIFY MANUALLY! USE THE MAKEFILE! 
++  const char *ssid = "[ROUTER_SSID]";
++  const char *password = "[ROUTER_PASSWORD]";
++};
++
++#endif
+diff -uN "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/ESP32_CameraServer_AP_20220120.ino" /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120_conn_to_router/ESP32_CameraServer_AP_20220120.ino
+--- "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/ESP32_CameraServer_AP_20220120.ino"	2021-03-16 17:19:12.000000000 +0100
++++ /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120_conn_to_router/ESP32_CameraServer_AP_20220120.ino	2026-01-18 21:19:40.592997372 +0100
+@@ -6,6 +6,12 @@
+  * @LastEditors: Changhua
+  * @LastEditTime: 2020-09-07 09:40:03
+  */
++
++/*
++ * NOTE: Modified by Michele De Stefano.
++ * Modifications marked with the MDS flag in comments.
++ */
++
+ //#include <EEPROM.h>
+ #include "CameraWebServer_AP.h"
+ #include <WiFi.h>
+@@ -29,7 +35,7 @@
+     Serial.println("[Client connected]");
+     String readBuff;
+     String sendBuff;
+-    uint8_t Heartbeat_count = 0;
++    // uint8_t Heartbeat_count = 0; // MDS: Removed this line that is now useless
+     bool Heartbeat_status = false;
+     bool data_begin = true;
+     while (client.connected()) //如果客户端处于连接状态
+@@ -77,34 +83,39 @@
+       if (millis() - Heartbeat_time > 1000) //心跳频率
+       {
+         client.print("{Heartbeat}");
+-        if (true == Heartbeat_status)
+-        {
+-          Heartbeat_status = false;
+-          Heartbeat_count = 0;
+-        }
+-        else if (false == Heartbeat_status)
+-        {
+-          Heartbeat_count += 1;
+-        }
+-        if (Heartbeat_count > 3)
+-        {
+-          Heartbeat_count = 0;
+-          Heartbeat_status = false;
+-          break;
+-        }
++        /*
++         * MDS: Commented hearbeat check to keep the server alive.
++         */
++        // if (true == Heartbeat_status)
++        // {
++        //   Heartbeat_status = false;
++        //   Heartbeat_count = 0;
++        // }
++        // else if (false == Heartbeat_status)
++        // {
++        //   Heartbeat_count += 1;
++        // }
++        // if (Heartbeat_count > 3)
++        // {
++        //   Heartbeat_count = 0;
++        //   Heartbeat_status = false;
++        //   break;
++        // }
+         Heartbeat_time = millis();
+       }
+-      static unsigned long Test_time = 0;
+-      if (millis() - Test_time > 1000) //定时检测连接设备
+-      {
+-        Test_time = millis();
+-        //Serial2.println(WiFi.softAPgetStationNum());
+-        if (0 == (WiFi.softAPgetStationNum())) //如果连接的设备个数为“0” 则向车模发送停止命令
+-        {
+-          Serial2.print("{\"N\":100}");
+-          break;
+-        }
+-      }
++      
++      // MDS: Disabled the following block because I disabled the AP mode
++      // static unsigned long Test_time = 0;
++      // if (millis() - Test_time > 1000) //定时检测连接设备
++      // {
++      //   Test_time = millis();
++      //   Serial2.println(WiFi.softAPgetStationNum());
++      //   if (0 == (WiFi.softAPgetStationNum())) //如果连接的设备个数为“0” 则向车模发送停止命令
++      //   {
++      //     Serial2.print("{\"N\":100}");
++      //     break;
++      //   }
++      // }
+     }
+     Serial2.print("{\"N\":100}");
+     client.stop(); //结束当前连接:
+Binary files /home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/ESP32_CameraServer_AP_20220120.ino.bin and /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120_conn_to_router/ESP32_CameraServer_AP_20220120.ino.bin differ
+Common subdirectories: /home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/.vscode and /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120_conn_to_router/.vscode

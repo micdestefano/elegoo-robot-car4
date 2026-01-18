@@ -1,0 +1,86 @@
+diff -uN "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/CameraWebServer_AP.h" /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120/CameraWebServer_AP.h
+--- "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/CameraWebServer_AP.h"	2021-03-16 17:19:12.000000000 +0100
++++ /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120/CameraWebServer_AP.h	2026-01-18 20:02:13.831098654 +0100
+@@ -7,6 +7,11 @@
+  * @LastEditTime: 2020-07-23 14:21:48
+  */
+ 
++ /*
++ * NOTE: Modified by Michele De Stefano.
++ * Modifications marked with the MDS flag in comments.
++ */
++
+ #ifndef _CameraWebServer_AP_H
+ #define _CameraWebServer_AP_H
+ #include "esp_camera.h"
+@@ -22,9 +27,10 @@
+ private:
+   // const char *ssid = "ESP32_CAM";
+   // const char *password = "elegoo2020";
+-  char *ssid = "ELEGOO-";
++  const char *ssid = "ELEGOO-";
+   //char *password = "elegoo2020";
+-  char *password = "";
++  // MDS NOTE: If you want to protect your robot network connnection, set a password of your choice here
++  const char *password = "";
+ };
+ 
+ #endif
+diff -uN "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/ESP32_CameraServer_AP_20220120.ino" /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120/ESP32_CameraServer_AP_20220120.ino
+--- "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/ESP32_CameraServer_AP_20220120.ino"	2021-03-16 17:19:12.000000000 +0100
++++ /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120/ESP32_CameraServer_AP_20220120.ino	2026-01-18 20:04:28.981554865 +0100
+@@ -6,6 +6,12 @@
+  * @LastEditors: Changhua
+  * @LastEditTime: 2020-09-07 09:40:03
+  */
++
++/*
++ * NOTE: Modified by Michele De Stefano.
++ * Modifications marked with the MDS flag in comments.
++ */
++
+ //#include <EEPROM.h>
+ #include "CameraWebServer_AP.h"
+ #include <WiFi.h>
+@@ -77,21 +83,24 @@
+       if (millis() - Heartbeat_time > 1000) //心跳频率
+       {
+         client.print("{Heartbeat}");
+-        if (true == Heartbeat_status)
+-        {
+-          Heartbeat_status = false;
+-          Heartbeat_count = 0;
+-        }
+-        else if (false == Heartbeat_status)
+-        {
+-          Heartbeat_count += 1;
+-        }
+-        if (Heartbeat_count > 3)
+-        {
+-          Heartbeat_count = 0;
+-          Heartbeat_status = false;
+-          break;
+-        }
++        /*
++         * MDS: Commented hearbeat check to keep the server alive.
++         */
++        // if (true == Heartbeat_status)
++        // {
++        //   Heartbeat_status = false;
++        //   Heartbeat_count = 0;
++        // }
++        // else if (false == Heartbeat_status)
++        // {
++        //   Heartbeat_count += 1;
++        // }
++        // if (Heartbeat_count > 3)
++        // {
++        //   Heartbeat_count = 0;
++        //   Heartbeat_status = false;
++        //   break;
++        // }
+         Heartbeat_time = millis();
+       }
+       static unsigned long Test_time = 0;
+Binary files /home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/ESP32_CameraServer_AP_20220120.ino.bin and /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120/ESP32_CameraServer_AP_20220120.ino.bin differ
+Common subdirectories: /home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/04 Code of Carmer (ESP32)/ESP32-WROVER-Camera/ESP32_CameraServer_AP_20220120/.vscode and /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/ESP32_CameraServer_AP_20220120/.vscode

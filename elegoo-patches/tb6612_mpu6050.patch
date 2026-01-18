@@ -1,0 +1,95 @@
+Common subdirectories: /home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/02 Main Program   (Arduino UNO)/TB6612 & MPU6050/SmartRobotCarV4.0_V1_20230201/addLibrary and /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/tb6612_mpu6050/SmartRobotCarV4.0_V1_20230201/addLibrary
+diff -uN "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/02 Main Program   (Arduino UNO)/TB6612 & MPU6050/SmartRobotCarV4.0_V1_20230201/ApplicationFunctionSet_xxx0.cpp" /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/tb6612_mpu6050/SmartRobotCarV4.0_V1_20230201/ApplicationFunctionSet_xxx0.cpp
+--- "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/02 Main Program   (Arduino UNO)/TB6612 & MPU6050/SmartRobotCarV4.0_V1_20230201/ApplicationFunctionSet_xxx0.cpp"	2023-02-01 15:45:20.000000000 +0100
++++ /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/tb6612_mpu6050/SmartRobotCarV4.0_V1_20230201/ApplicationFunctionSet_xxx0.cpp	2026-01-18 18:05:46.817293577 +0100
+@@ -6,6 +6,12 @@
+  * @Description: Smart Robot Car V4.0
+  * @FilePath: 
+  */
++
++/*
++ * NOTE: Modified by Michele De Stefano.
++ * Modifications marked with the MDS flag in comments.
++ */
++
+ #include <avr/wdt.h>
+ //#include <hardwareSerial.h>
+ #include <stdio.h>
+@@ -14,6 +20,7 @@
+ #include "DeviceDriverSet_xxx0.h"
+ 
+ #include "ArduinoJson-v6.11.1.h" //ArduinoJson
++#include "MPU6050.h"  // MDS
+ #include "MPU6050_getdata.h"
+ 
+ #define _is_print 1
+@@ -22,6 +29,7 @@
+ ApplicationFunctionSet Application_FunctionSet;
+ 
+ /*Hardware device object list*/
++MPU6050 mpu;  // MDS
+ MPU6050_getdata AppMPU6050getdata;
+ DeviceDriverSet_RBGLED AppRBG_LED;
+ DeviceDriverSet_Key AppKey;
+@@ -1542,6 +1550,20 @@
+ #endif
+   }
+ }
++
++// MDS: Added this method for MPU data acquisition
++void ApplicationFunctionSet::CMD_GetMPUData() {
++    int16_t ax, ay, az, gx, gy, gz;
++
++    mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
++    Serial.print(
++      "{\"id\":\"" + CommandSerialNumber + "\"," +
++      "\"t\":" + String(millis()) + "," +
++      "\"a\":[" + String(ax) + "," + String(ay) + "," + String(az) + "]," +
++      "\"g\":[" + String(gx) + "," + String(gy) + "," + String(gz) + "]}"
++    );
++}
++
+ /*
+   N22:command
+   CMD mode：Tracking module receives and feeds back tracing status and data according to the control command of APP terminal
+@@ -2023,7 +2045,9 @@
+         // Serial.print('{' + CommandSerialNumber + "_ok}");
+ #endif
+         break;
+-
++      case 1000:  // MDS: New code for requesting MPU data
++        CMD_GetMPUData();
++        break;
+       default:
+         break;
+       }
+diff -uN "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/02 Main Program   (Arduino UNO)/TB6612 & MPU6050/SmartRobotCarV4.0_V1_20230201/ApplicationFunctionSet_xxx0.h" /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/tb6612_mpu6050/SmartRobotCarV4.0_V1_20230201/ApplicationFunctionSet_xxx0.h
+--- "/home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/02 Main Program   (Arduino UNO)/TB6612 & MPU6050/SmartRobotCarV4.0_V1_20230201/ApplicationFunctionSet_xxx0.h"	2022-03-23 15:46:10.000000000 +0100
++++ /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/tb6612_mpu6050/SmartRobotCarV4.0_V1_20230201/ApplicationFunctionSet_xxx0.h	2026-01-18 18:09:01.405312219 +0100
+@@ -6,6 +6,12 @@
+  * @Description: Smart Robot Car V4.0
+  * @FilePath: 
+  */
++
++/*
++ * NOTE: Modified by Michele De Stefano.
++ * Modifications marked with the MDS flag in comments.
++ */
++
+ #ifndef _ApplicationFunctionSet_xxx0_H_
+ #define _ApplicationFunctionSet_xxx0_H_
+ 
+@@ -54,6 +60,12 @@
+   void CMD_LEDNumberDisplayControl_xxx0(uint8_t is_LEDNumber);
+   void CMD_TrajectoryControl_xxx0(void);
+ 
++  /*
++   * MDS: Added declaration of the method for retrieving MPU data.
++   */
++private:
++  void CMD_GetMPUData();
++
+ private:
+   /*Sensor Raw Value*/
+   volatile float VoltageData_V;        //Battery Voltage Value
+Common subdirectories: /home/michele/Downloads/arduino/elegoo/ELEGOO Smart Robot Car Kit V4.0 2023.02.01/02 Manual & Main Code & APP/02 Main Program   (Arduino UNO)/TB6612 & MPU6050/SmartRobotCarV4.0_V1_20230201/.vscode and /home/michele/src/arduino/elegoo-smart-car-robot-4/board-software/tb6612_mpu6050/SmartRobotCarV4.0_V1_20230201/.vscode
