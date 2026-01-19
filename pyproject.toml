@@ -19,6 +19,13 @@ classifiers = [
 license = "MIT"
 license-files = ["LICEN[CS]E*"]
 
+dependencies = [
+    "opencv-python>=4.13.0.90",
+    "pygame-ce>=2.5.6",
+    "requests>=2.32.5",
+    "scipy>=1.17.0",
+]
+
 [project.urls]
 Homepage = "https://github.com/micdestefano/elegoo-robot-car4"
 Documentation = "https://github.com/micdestefano/elegoo-robot-car4/blob/main/README.md"
@@ -26,12 +33,6 @@ Download = "https://pypi.org/project/elegoo-robot-car4/#files"
 Source = "https://github.com/micdestefano/elegoo-robot-car4"
 Issues = "https://github.com/micdestefano/elegoo-robot-car4/issues"
 
-dependencies = [
-    "opencv-python>=4.13.0.90",
-    "pygame-ce>=2.5.6",
-    "requests>=2.32.5",
-    "scipy>=1.17.0",
-]
 
 [project.scripts]
 elegoo-smartcar-control = "elegoo_robot_car4.elegoo_smartcar_control:main"
