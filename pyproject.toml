@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Python software for controlling the Elegoo Smart Robot Car V4.0"
 readme = "README.md"
 authors = [
-    { name = "Michele De Stefano", email = "---" }
+    { name = "Michele De Stefano" }
 ]
 requires-python = ">=3.12"
 dependencies = [
