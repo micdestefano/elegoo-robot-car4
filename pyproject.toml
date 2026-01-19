@@ -1,12 +1,31 @@
 [project]
 name = "elegoo-robot-car4"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python software for controlling the Elegoo Smart Robot Car V4.0"
 readme = "README.md"
 authors = [
     { name = "Michele De Stefano" }
 ]
 requires-python = ">=3.12"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+
+[project.urls]
+Homepage = "https://github.com/micdestefano/elegoo-robot-car4"
+Documentation = "https://github.com/micdestefano/elegoo-robot-car4/blob/main/README.md"
+Download = "https://pypi.org/project/elegoo-robot-car4/#files"
+Source = "https://github.com/micdestefano/elegoo-robot-car4"
+Issues = "https://github.com/micdestefano/elegoo-robot-car4/issues"
+
 dependencies = [
     "opencv-python>=4.13.0.90",
     "pygame-ce>=2.5.6",
