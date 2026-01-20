@@ -1,0 +1,20 @@
+name: Automated tests
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y make
+      - name: Checkout sources
+        uses: actions/checkout@v6
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v7
+      - name: Setup test environment
+        run: |
+          make init-test
+      - name: Run tests and produce code coverage
+        run: |
+          make test

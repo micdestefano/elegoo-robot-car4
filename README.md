@@ -27,6 +27,7 @@ This is the hardware of my robot:
 - camera: `ESP32-WROVER`
 
 ## Repository organization 📂
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 
 - `src/elegoo_robot_car4`: this directory contains a Python package that you can
   use to control the robot after you have uploaded to the boards the patched
@@ -158,15 +159,15 @@ to `cam`. Then, switch on the robot. On the `ESP32` you'll notice a blinking
 green led: the `ESP32` is waiting for a client to connect.
 
 ### Install Python software
-You have two options here:
-
-- from within the root of the project, run `pip install .` (maybe you need
-  to install dependencies).
+You have these options:
 
 - install from `PyPI`: `pip install elegoo-robot-car4`.
 
-- don't install anything and run through `uv` from the root of the project
-  (you need to [install uv](
+- from within the sources root of the project, run `pip install .` (you need
+  to install dependencies yourself).
+
+- don't install anything and run through `uv` from the sources root of the
+  project (you have to [install uv](
     https://docs.astral.sh/uv/getting-started/installation/)
   ).
 
@@ -261,7 +262,7 @@ do:
   _cross_hat_ allows only forward, backward and left-rigt rotations
   _on-the-spot_, the stick allows you to move the robot forward-left,
   forward-right, backward-left and backward-right. This is not possible with the
-  keyboard.
+  keyboard at present.
 
 - the right trigger controls the speed of the robot. This is not possible
   with the keyboard at present.

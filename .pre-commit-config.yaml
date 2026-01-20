@@ -1,0 +1,51 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v6.0.0
+      hooks:
+          - id: no-commit-to-branch
+            stages: [pre-commit]
+          - id: check-case-conflict
+            stages: [pre-commit]
+          - id: check-executables-have-shebangs
+            stages: [pre-commit]
+          - id: check-shebang-scripts-are-executable
+            stages: [pre-commit]
+          - id: trailing-whitespace
+            stages: [pre-commit]
+          - id: end-of-file-fixer
+            stages: [pre-commit]
+          - id: check-illegal-windows-names
+            stages: [pre-commit]
+          - id: check-toml
+            stages: [pre-commit]
+          - id: check-yaml
+            stages: [pre-commit]
+          - id: debug-statements
+            stages: [pre-commit]
+            language_version: python3
+          - id: detect-private-key
+            stages: [pre-commit]
+
+    - repo: https://github.com/astral-sh/ruff-pre-commit
+        # Ruff version.
+      rev: v0.14.13
+      hooks:
+          # Run the linter.
+          - id: ruff-check
+            args: [ --fix ]
+            stages: [pre-commit]
+          # Run the formatter.
+          - id: ruff-format
+            stages: [pre-commit]
+
+    - repo: local
+      hooks:
+          - id: test
+            name: Run all tests
+            entry: make test
+            stages: [pre-push]
+            language: system
+            always_run: true
+            pass_filenames: false
