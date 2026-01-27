@@ -44,6 +44,8 @@ help:
 	@echo "update-hooks: Updates all git hooks to their latest version.\n"
 	@echo "pre-commit-all-files: Forces a pre-commit run on all files and not"
 	@echo "            only on changed files.\n"
+	@echo "tag:        Tags the current commit with the version number taken"
+	@echo "            from the pyproject.toml file.\n"
 	@echo "publish:    Publishes the package to PyPI. Pay attention to how you"
 	@echo "            initialized the working copy. You should ahve used init"
 	@echo "            and not the other init variants. If you did that, clean"
@@ -177,6 +179,11 @@ update-hooks: check-uv
 pre-commit-all-files: check-uv
 	@echo "Running pre-commit hooks on all files"
 	uv run pre-commit run --all-files
+
+.PHONY: tag
+tag: check-uv
+	@echo "Tagging commit with the current version"
+	git tag "$$(uv version --short)"
 
 .PHONY: publish
 publish: check-uv
