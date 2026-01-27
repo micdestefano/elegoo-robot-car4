@@ -44,6 +44,10 @@ help:
 	@echo "update-hooks: Updates all git hooks to their latest version.\n"
 	@echo "pre-commit-all-files: Forces a pre-commit run on all files and not"
 	@echo "            only on changed files.\n"
+	@echo "publish:    Publishes the package to PyPI. Pay attention to how you"
+	@echo "            initialized the working copy. You should ahve used init"
+	@echo "            and not the other init variants. If you did that, clean"
+	@echo "            and re-initialize with the init goal.\n"
 	@echo "clean:      Entirely cleans the (Python) project.\n"
 
 
@@ -173,6 +177,12 @@ update-hooks: check-uv
 pre-commit-all-files: check-uv
 	@echo "Running pre-commit hooks on all files"
 	uv run pre-commit run --all-files
+
+.PHONY: publish
+publish: check-uv
+	@echo "Build and publish to PyPI"
+	uv build
+	uv publish
 
 .PHONY: clean
 clean:
