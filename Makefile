@@ -19,9 +19,9 @@ help:
 	@echo "config: get the official ELEGOO software and patches it so that the"
 	@echo "        robot connects to a router.\n"
 	@echo "config-ap: similar to config, but keeps the robot in access-point"
-	@echo "           (AP) mode.\n"
+	@echo "        (AP) mode.\n"
 	@echo "reset-elegoo: removes the ELEGOO software directory. It does not"
-	@echo "              erase the '$(ELEGOO_ZIP_FILE)' file.\n"
+	@echo "        erase the '$(ELEGOO_ZIP_FILE)' file.\n"
 	@echo "clean-elegoo: removes any downloaded, patched or generated file.\n"
 	@echo "Once ELEGOO software has been patched you can upload it to your"
 	@echo "boards (main board and ESP32) with the same procedure explained"
@@ -147,9 +147,7 @@ format:	check-uv
 
 .PHONY: test
 test:
-	# NOTE: At present I'm not enforcing a minimum code coverage
-	uv run pytest --cov=src --cov-branch --cov-report=html --cov-report=term-missing --cov-precision=1 tests/
-	#uv run pytest --cov=src --cov-branch --cov-report=html --cov-report=term-missing --cov-fail-under=95 --cov-precision=1 tests/
+	uv run pytest --cov=src --cov-branch --cov-report=html --cov-report=term-missing --cov-fail-under=95 --cov-precision=1 tests/
 
 .PHONY: checklist
 checklist: lint format test

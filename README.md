@@ -18,6 +18,13 @@ Also the original **ELEGOO** documentation warns about
 this point. Verify which is your configuration before blindly uploading my
 modified software on your robot boards.
 
+## Clone the sources ⚠️
+In order to customize the software for the Arduino boards of the robot you have
+to clone the source repository on your machine and follow the instructions
+below.
+
+⚠️ **The package on PyPI provides only Python software** ⚠️
+
 ## Hardware configuration of my robot 🤖🔧⚙️
 This is the hardware of my robot:
 
@@ -170,6 +177,15 @@ You have these options:
   project (you have to [install uv](
     https://docs.astral.sh/uv/getting-started/installation/)
   ).
+
+⚠️ This package now exploits some AI features that depend on `ultralytics`
+and `pytorch` (specifically `torch` and `torchvision`). The `pyproject.toml`
+file specifies a `pytorch` version which is compatible also with older GPU
+boards. If you encounter errors from `CUDA` you should provide the
+`--extra-index-url` option with the same `url` specified into the
+`pyproject.toml` file (look at the `[[tool.uv.index]]` section.
+When running on hardware without `CUDA` the `ultralytics` package should
+automatically fallback to using the CPU.
 
 ### Use Python software
 The `elegoo_robot_car_4` Python package provides a `Car` class through which

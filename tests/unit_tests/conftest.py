@@ -70,12 +70,28 @@ def capture_request_mock(mocker, resources_path: Path) -> MagicMock:
 
 
 @pytest.fixture(scope="function")
+def yolo_model_mock(mocker) -> MagicMock:
+    return mocker.patch("elegoo_robot_car4.car.Model", autospec=True)
+
+
+@pytest.fixture(scope="function")
+def yolo_class_mock(mocker, yolo_model_mock: MagicMock) -> MagicMock:
+    return mocker.patch(
+        "elegoo_robot_car4.car.YOLO",
+        autospec=True,
+        return_value=yolo_model_mock,
+    )
+
+
+@pytest.fixture(scope="function")
 def car_mocks(
     socket_mock: MagicMock,
     socket_class_mock: MagicMock,
     get_mpu_data_mock: MagicMock,
     set_head_angle_mock: MagicMock,
     capture_request_mock: MagicMock,
+    yolo_model_mock: MagicMock,
+    yolo_class_mock: MagicMock,
 ) -> dict[str, MagicMock]:
     return {
         "socket": socket_mock,
@@ -83,4 +99,6 @@ def car_mocks(
         "get_mpu_data": get_mpu_data_mock,
         "set_head_angle": set_head_angle_mock,
         "capture_request": capture_request_mock,
+        "yolo_model_mock": yolo_model_mock,
+        "yolo_class_mock": yolo_class_mock,
     }

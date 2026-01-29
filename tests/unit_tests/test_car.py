@@ -66,7 +66,7 @@ def test_capture(car_mocks: dict[str, MagicMock]) -> None:
     # then
     assert isinstance(frame, np.ndarray), "Correct frame type"
     assert len(frame.shape) == 3, "Correct frame shape size"
-    assert frame.shape[0] > frame.shape[1], "Correct image rotation"
+    assert frame.shape[0] < frame.shape[1], "Correct image rotation"
     assert frame.shape[-1] == 3, "Correct number of frame channels"
 
 
@@ -222,3 +222,57 @@ def test_clear_all_states_with_dry_run(car_mocks: dict[str, MagicMock]) -> None:
 
     # then
     socket_mock.recv.assert_not_called()
+
+
+def test_toggle_vision_tracking_mode(car_mocks: dict[str, MagicMock]) -> None:
+    # given
+    yolo_class_mock = car_mocks["yolo_class_mock"]
+    car = Car()
+
+    # then
+    assert not car.vision_tracking_is_on
+
+    # when
+    car.toggle_vision_tracking()
+
+    # then
+    assert car.vision_tracking_is_on
+    yolo_class_mock.assert_called_once()
+
+    # when
+    car.toggle_vision_tracking()
+
+    # then
+    assert not car.vision_tracking_is_on
+    yolo_class_mock.assert_called_once()
+
+
+def test_vision_tracking_when_it_is_enabled(
+    car_mocks: dict[str, MagicMock],
+) -> None:
+    # given
+    car = Car()
+    car.toggle_vision_tracking()
+    test_frame = np.array([])
+    yolo_model_mock = car_mocks["yolo_model_mock"]
+
+    # when
+    car.track(test_frame)
+
+    # then
+    yolo_model_mock.track.assert_called_once()
+
+
+def test_vision_tracking_when_it_is_disabled(
+    car_mocks: dict[str, MagicMock],
+) -> None:
+    # given
+    car = Car()
+    test_frame = np.array([])
+    yolo_model_mock = car_mocks["yolo_model_mock"]
+
+    # when
+    car.track(test_frame)
+
+    # then
+    yolo_model_mock.track.assert_not_called()

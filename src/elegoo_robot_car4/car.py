@@ -10,6 +10,9 @@ import cv2 as cv
 import numpy as np
 import requests as req
 import scipy.integrate
+from ultralytics import YOLO
+from ultralytics.engine.model import Model
+from ultralytics.engine.results import Results
 
 
 class Car(AbstractContextManager):
@@ -53,6 +56,9 @@ class Car(AbstractContextManager):
     # +/- 250 deg/s quantized with 16 bit (it is about 1 / 131)
     __gyro_quantum: float = 500.0 / __num_quant_steps
 
+    __yolo_model: str = "yolo26n.pt"
+    __vision_tracking_on: bool
+
     log: bool
     __state: str
     __dry_run: bool
@@ -64,6 +70,7 @@ class Car(AbstractContextManager):
     __g_offsets: np.ndarray
     __capture_endpoint: str
     __socket: socket.socket
+    __tracking_model: Model | None
 
     # Ultrasonic regression coefficients for sensor -> real measurement
     # conversion
@@ -97,6 +104,8 @@ class Car(AbstractContextManager):
         self.__a_offsets = np.zeros(3)
         self.__g_offsets = np.zeros(3)
         self.__capture_endpoint = f"http://{ip}/capture"
+        self.__tracking_model = None
+        self.__vision_tracking_on = False
         if not dry_run:
             self.__socket = socket.socket()
             # Set a timeout of 2 seconds for all the blocking operations on
@@ -138,6 +147,23 @@ class Car(AbstractContextManager):
         rounded_step = int(step * 0.1) * 10
         self.__head_angle_scan_step = np.clip(rounded_step, 10, 80)
 
+    @property
+    def vision_tracking_is_on(self) -> bool:
+        return self.__vision_tracking_on
+
+    def toggle_vision_tracking(self) -> None:
+        """
+        Toggles the vision-tracking mode.
+
+        Args:
+            on: If True, switches the vision-tracking mode on. Otherwise it
+                switches it off.
+        """
+        self.__vision_tracking_on = not self.__vision_tracking_on
+        self.__tracking_model = (
+            YOLO(self.__yolo_model) if self.__vision_tracking_on else None
+        )
+
     def disconnect(self) -> None:
         """
         Closes the connection with the robot car.
@@ -150,17 +176,35 @@ class Car(AbstractContextManager):
         Takes a snapshot from the robot's camera.
 
         Returns:
-            A snapshot from the robot's camera.
+            A snapshot from the robot's camera. The frame is in BGR format
+            with (height, width, 3) shape.
         """
         if self.__dry_run:
             return np.array([])
         r = req.get(self.__capture_endpoint)
         frame = np.asarray(bytearray(r.content), dtype=np.int8)
-        return cv.transpose(
-            cv.cvtColor(
-                cv.imdecode(frame, cv.IMREAD_UNCHANGED), cv.COLOR_BGR2RGB
-            )
+        return cv.imdecode(frame, cv.IMREAD_UNCHANGED)
+
+    def track(self, frame: np.ndarray, **kwargs) -> list[Results]:
+        """
+        Tracks detected items on a frame.
+
+        Args:
+            frame:  Frame returned by the capture method.
+
+            kwargs: Keyword arguments to be passed to YOLO model's track
+                    method (look at YOLO documentation), further to the
+                    frame argument.
+
+        Returns:
+            List of results obtained from a YOLO model.
+        """
+        results = (
+            self.__tracking_model.track(frame, **kwargs)
+            if self.__tracking_model
+            else []
         )
+        return results
 
     def request_mpu_data(self) -> str:
         """
