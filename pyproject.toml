@@ -49,8 +49,10 @@ build-backend = "uv_build"
 dev = [
     "ipython>=9.9.0",
     "matplotlib>=3.10.8",
+    "pandas>=3.0.0",
     "pre-commit>=4.5.1",
     "ruff>=0.14.13",
+    "seaborn>=0.13.2",
 ]
 test = [
     "pytest>=9.0.2",
