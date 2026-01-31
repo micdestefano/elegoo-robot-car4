@@ -9,6 +9,7 @@ import cv2 as cv
 import numpy as np
 import pygame as pg
 
+from .__init__ import __version__
 from .car import Car
 
 
@@ -242,26 +243,48 @@ class GameEngine:
         self.__car.disconnect()
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description="Program for remotely controlling Elegoo Smart "
         "Robot Car v4.0"
     )
-    parser.add_argument("robot_ip", type=str, help="Robot IP address")
+    parser.add_argument(
+        "--robot-ip",
+        dest="robot_ip",
+        type=str,
+        default=None,
+        help="Robot IP address.",
+    )
     parser.add_argument(
         "--log",
         dest="log",
         action="store_true",
         help="Acquired commands are printed to the console. "
-        "Default: %(default)s",
+        "Default: %(default)s.",
     )
     parser.add_argument(
         "--dry-run",
         dest="dry_run",
         action="store_true",
-        help="Run without sending any command to the car. Default: %(default)s",
+        help="Run without sending any command to the car. "
+        "Default: %(default)s.",
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        dest="version_requested",
+        action="store_true",
+        help="Print the version and exit.",
     )
     args = parser.parse_args()
+
+    if args.version_requested:
+        print(f"Version: {__version__}")
+        return
+
+    if not args.robot_ip:
+        print("Specify a robot IP address!")
+        exit(1)
 
     pg.init()
 

@@ -1,6 +1,6 @@
 [project]
 name = "elegoo-robot-car4"
-version = "0.3.0"
+version = "1.0.0"
 description = "Python software for controlling the Elegoo Smart Robot Car V4.0"
 readme = "README.md"
 authors = [
