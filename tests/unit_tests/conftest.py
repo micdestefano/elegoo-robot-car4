@@ -5,6 +5,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import numpy as np
 import pytest
 
 from elegoo_robot_car4 import Car
@@ -58,6 +59,31 @@ def set_head_angle_mock(mocker) -> MagicMock:
 
 
 @pytest.fixture(scope="function")
+def car_forward_mock(mocker) -> MagicMock:
+    return mocker.patch.object(Car, "forward", autospec=True)
+
+
+@pytest.fixture(scope="function")
+def car_left_mock(mocker) -> MagicMock:
+    return mocker.patch.object(Car, "left", autospec=True)
+
+
+@pytest.fixture(scope="function")
+def car_right_mock(mocker) -> MagicMock:
+    return mocker.patch.object(Car, "right", autospec=True)
+
+
+@pytest.fixture(scope="function")
+def car_stop_mock(mocker) -> MagicMock:
+    return mocker.patch.object(Car, "stop", autospec=True)
+
+
+@pytest.fixture(scope="function")
+def car_move_mock(mocker) -> MagicMock:
+    return mocker.patch.object(Car, "move", autospec=True)
+
+
+@pytest.fixture(scope="function")
 def capture_request_mock(mocker, resources_path: Path) -> MagicMock:
     response_file = resources_path / "capture-response.pkl"
     with open(response_file, "rb") as f:
@@ -102,3 +128,27 @@ def car_mocks(
         "yolo_model_mock": yolo_model_mock,
         "yolo_class_mock": yolo_class_mock,
     }
+
+
+@pytest.fixture(scope="function")
+def car_motion_mocks(
+    car_mocks: dict[str, MagicMock],
+    car_forward_mock: MagicMock,
+    car_left_mock: MagicMock,
+    car_right_mock: MagicMock,
+    car_stop_mock: MagicMock,
+    car_move_mock: MagicMock,
+) -> dict[str, MagicMock]:
+    car_mocks |= {
+        "car_forward": car_forward_mock,
+        "car_left": car_left_mock,
+        "car_right": car_right_mock,
+        "car_stop": car_stop_mock,
+        "car_move": car_move_mock,
+    }
+    return car_mocks
+
+
+@pytest.fixture(scope="function")
+def frame_shape_hw() -> np.ndarray:
+    return np.array([600, 800])

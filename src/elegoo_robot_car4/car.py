@@ -177,7 +177,7 @@ class Car(AbstractContextManager):
 
         Returns:
             A snapshot from the robot's camera. The frame is in BGR format
-            with (height, width, 3) shape.
+            with (height, width, 3) shape (OpenCV format).
         """
         if self.__dry_run:
             return np.array([])

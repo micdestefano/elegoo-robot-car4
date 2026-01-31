@@ -266,8 +266,12 @@ captured anymore.
 Keyboard controls are clearly visible at the beginning of the
 `elegoo_smartcar_control.py` file, where there is a dictionary mapping each
 key input to a movement command. There are also mappings to change the mode
-of the robot. By default the robot waits for a remote connection, but you can
-switch its mode with the proper keys (this is not possible with the gamepad).
+of the robot. By default, the robot waits for a remote move commands, but you
+can switch its mode through console input (this is not possible with the
+gamepad). To open the console menu, press "t". The program can be closed either
+by closing the window with the camera streaming or pressing the escape key.
+Remember that all the commands have an effect only if you have focus on the
+streaming window.
 
 ### Gamepad controls 🤖🎮
 Gamepad offers more degrees of freedom for the movement. I configured controls
