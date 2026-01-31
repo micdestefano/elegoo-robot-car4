@@ -8,9 +8,11 @@ from typing import Any
 import cv2 as cv
 import numpy as np
 import pygame as pg
+from ultralytics.engine.results import Results
 
 from .__init__ import __version__
 from .car import Car
+from .person_follower import PersonFollower
 
 
 class GameEngine:
@@ -37,6 +39,11 @@ class GameEngine:
 
     __car: Car
 
+    __last_track_results: list[Results]
+
+    __person_follower: PersonFollower
+    __run_person_follower: bool
+
     def __init__(self, robot_ip: str, log: bool = False, dry_run: bool = False):
         """
         Constructor.
@@ -52,13 +59,17 @@ class GameEngine:
         self.__joysticks = {}
         self.__dry_run = dry_run
         self.__autonomous_mode = False
+        self.__run_person_follower = False
         self.__car = Car(ip=robot_ip, log=log, dry_run=dry_run)
-        capture_size = (
-            self.__dry_run_size
-            if dry_run
-            else self.__car.capture().shape[-2::-1]
+        self.__last_track_results = []
+        capture_shape = np.array(
+            self.__dry_run_size if dry_run else self.__car.capture().shape[:2]
         )
-        self.__display = pg.display.set_mode(capture_size)
+        display_size = self.__dry_run_size if dry_run else capture_shape[::-1]
+        self.__person_follower = PersonFollower(
+            car=self.__car, frame_shape=capture_shape
+        )
+        self.__display = pg.display.set_mode(display_size)
         pg.display.set_caption("Elegoo Smart Robot Car v4.0 controller")
 
         self.__delta_speed = self.__max_speed - self.__min_speed
@@ -80,7 +91,7 @@ class GameEngine:
 
     def __process_frame(self, frame: np.ndarray) -> np.ndarray:
         if self.__car.vision_tracking_is_on:
-            track_results = self.__car.track(
+            self.__last_track_results = self.__car.track(
                 frame,
                 classes=[0],
                 conf=0.5,
@@ -88,8 +99,10 @@ class GameEngine:
                 verbose=False,
                 persist=True,
             )
-            for result in track_results:
+            for result in self.__last_track_results:
                 frame = result.plot(img=frame)
+        else:
+            self.__last_track_results = []
         frame = cv.transpose(cv.cvtColor(frame, cv.COLOR_BGR2RGB))
         return frame
 
@@ -127,6 +140,9 @@ class GameEngine:
 
             if keyboard_player_actions["command_received"] == "terminal":
                 self.__handle_terminal_input()
+
+            if self.__run_person_follower:
+                self.__person_follower.follow(self.__last_track_results)
 
     def __detect_relevant_events(self, events: list[pg.Event]) -> list[int]:
         joystick_buttons = []
@@ -258,14 +274,21 @@ class GameEngine:
         )
         print(f"{Car.FOLLOW_MODE} - Activate (ultrasonic) follow mode")
         print("4 - Toggle person tracking mode")
+        print("5 - Toggle person tracking and following mode")
         print()
         user_choice = int(input("Enter your choice: "))
 
         self.__autonomous_mode = False
+        self.__run_person_follower = False
         if user_choice == 0:
             self.__car.clear_all_states()
         elif user_choice == 4:
             self.__car.toggle_vision_tracking()
+        elif user_choice == 5:
+            self.__autonomous_mode = True
+            if not self.__car.vision_tracking_is_on:
+                self.__car.toggle_vision_tracking()
+            self.__run_person_follower = True
         else:
             self.__autonomous_mode = True
             self.__car.set_mode(user_choice)
