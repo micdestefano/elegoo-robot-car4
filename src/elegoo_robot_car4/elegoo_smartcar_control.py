@@ -20,8 +20,9 @@ class GameEngine:
     __max_speed: int = 200
     __dry_run: bool
     __dry_run_size: tuple[int, int] = (400, 200)
+    __autonomous_mode: bool
 
-    __key_to_car_cmd: dict[int, Callable[[Car], Any]] = {
+    __key_to_move_cmd: dict[int, Callable[[Car], Any]] = {
         pg.K_UP: fun.partial(Car.forward, speed=__min_speed, lazy=True),
         pg.K_DOWN: fun.partial(Car.backward, speed=__min_speed, lazy=True),
         pg.K_LEFT: fun.partial(Car.left, speed=__min_speed, lazy=True),
@@ -29,11 +30,6 @@ class GameEngine:
         pg.K_a: fun.partial(Car.turn_head, delta=__head_delta, lazy=True),
         pg.K_d: fun.partial(Car.turn_head, delta=-__head_delta, lazy=True),
         pg.K_s: fun.partial(Car.set_head_angle, lazy=True),
-        pg.K_m: fun.partial(Car.set_mode, mode=Car.FOLLOW_MODE),
-        pg.K_o: fun.partial(Car.set_mode, mode=Car.OBSTACLE_AVOIDANCE_MODE),
-        pg.K_l: fun.partial(Car.set_mode, mode=Car.TRACKING_MODE),
-        pg.K_q: Car.clear_all_states,
-        pg.K_t: Car.toggle_vision_tracking,
     }
 
     __axis_thr: float = 0.5
@@ -55,6 +51,7 @@ class GameEngine:
         """
         self.__joysticks = {}
         self.__dry_run = dry_run
+        self.__autonomous_mode = False
         self.__car = Car(ip=robot_ip, log=log, dry_run=dry_run)
         capture_size = (
             self.__dry_run_size
@@ -70,7 +67,7 @@ class GameEngine:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.release_resoruces()
+        self.release_resources()
 
     def __display_new_frame(self) -> None:
         if self.__dry_run:
@@ -114,16 +111,22 @@ class GameEngine:
             joystick_buttons = self.__detect_relevant_events(events)
 
             keyboard_player_actions = self.__handle_keyboard_player_actions()
-            if keyboard_player_actions["finish"]:
+            if keyboard_player_actions["command_received"] == "finish":
                 break
 
-            player_command_received = keyboard_player_actions[
+            move_command_received = keyboard_player_actions[
                 "command_received"
-            ] or self.__handle_controller_player_actions(joystick_buttons)
+            ] == "movement" or self.__handle_controller_player_actions(
+                joystick_buttons
+            )
 
-            if not player_command_received:
-                self.__car.stop(lazy=True)
-            self.__car.move()
+            if not self.__autonomous_mode:
+                if not move_command_received:
+                    self.__car.stop(lazy=True)
+                self.__car.move()
+
+            if keyboard_player_actions["command_received"] == "terminal":
+                self.__handle_terminal_input()
 
     def __detect_relevant_events(self, events: list[pg.Event]) -> list[int]:
         joystick_buttons = []
@@ -143,19 +146,25 @@ class GameEngine:
                 joystick_buttons += [e.button]
         return joystick_buttons
 
-    def __handle_keyboard_player_actions(self) -> dict[str, bool]:
-        retval = {
-            "finish": False,
-            "command_received": False,
+    def __handle_keyboard_player_actions(self) -> dict[str, int | str | None]:
+        retval: dict[str, int | str | None] = {
+            "command_received": None,
+            "key": None,
         }
         was_pressed = pg.key.get_pressed()
         if was_pressed[pg.K_ESCAPE]:
-            retval["finish"] = True
+            retval["key"] = pg.K_ESCAPE
+            retval["command_received"] = "finish"
+        elif was_pressed[pg.K_t]:
+            retval["key"] = pg.K_t
+            retval["command_received"] = "terminal"
         else:
-            for key_cmd in self.__key_to_car_cmd:
+            for key_cmd in self.__key_to_move_cmd:
                 if was_pressed[key_cmd]:
-                    self.__key_to_car_cmd[key_cmd](self.__car)
-                    retval["command_received"] = True
+                    self.__key_to_move_cmd[key_cmd](self.__car)
+                    retval["command_received"] = "movement"
+                    retval["key"] = key_cmd
+                    break
         return retval
 
     def __handle_controller_player_actions(self, buttons: list[int]) -> bool:
@@ -239,7 +248,29 @@ class GameEngine:
 
         return command_received
 
-    def release_resoruces(self):
+    def __handle_terminal_input(self) -> None:
+        print("Options:")
+        print("========\n")
+        print("0 - Clear all states")
+        print(f"{Car.TRACKING_MODE} - Activate line tracking mode")
+        print(
+            f"{Car.OBSTACLE_AVOIDANCE_MODE} - Activate obstacle avoidance mode"
+        )
+        print(f"{Car.FOLLOW_MODE} - Activate (ultrasonic) follow mode")
+        print("4 - Toggle person tracking mode")
+        print()
+        user_choice = int(input("Enter your choice: "))
+
+        self.__autonomous_mode = False
+        if user_choice == 0:
+            self.__car.clear_all_states()
+        elif user_choice == 4:
+            self.__car.toggle_vision_tracking()
+        else:
+            self.__autonomous_mode = True
+            self.__car.set_mode(user_choice)
+
+    def release_resources(self):
         self.__car.disconnect()
 
 
