@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Now pressing "t" activates a terminal menu for switching mode or toggling
+  person following.
 - Now robot IP address must be specified through the `--robot-ip` option.
 - `--version, -v` options are now available for the `elegoo-smartcar-control`
   script.
