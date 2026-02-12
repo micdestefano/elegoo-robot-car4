@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1]
+
+### Changed
+
+- Project now uses `just` and not `make` for configuration.
+- Project now uses `prek` and not `pre-commit` for running hooks.
+
 ## [1.0.0] - 2026-02-01
 
 ### Added

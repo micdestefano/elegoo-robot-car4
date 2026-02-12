@@ -10,6 +10,9 @@ I started modifying the original software for these main reasons:
 2. It does not provide a way to access the **MPU6050** sensor (a gyroscope +
    accelerometer) data out of the box.
 
+A video presentation of what this software provides can be seen
+[here](https://www.youtube.com/watch?v=iasMmwncTi0).
+
 **WARNING: THIS SOFTWARE IS PROVIDED AS IS, WITH NO WARRANTY**
 
 I modified only the software corresponding to the motor driver chip
@@ -34,8 +37,7 @@ This is the hardware of my robot:
 - camera: `ESP32-WROVER`
 
 ## Repository organization 📂
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
-
+[![prek](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/j178/prek/master/docs/assets/badge-v0.json)](https://github.com/j178/prek)
 - `src/elegoo_robot_car4`: this directory contains a Python package that you can
   use to control the robot after you have uploaded to the boards the patched
   **ELEGOO** software. It also provides a simple Python
@@ -48,26 +50,26 @@ This is the hardware of my robot:
    router instead of creating a WiFi access point. Explore the patchfiles for
    more details.
 
-- `Makefile`: this file allows to download the official **ELEGOO** software for
+- `justfile`: this file allows to download the official **ELEGOO** software for
   this robot and to patch it. If you already have the official zip file, then
-  copy it into the root of the project, so that the `Makefile` targets will
-  skip the download.
+  copy it into the root of the project, so that the `justfile` targets will
+  skip the download. You have to install `just` into your system.
 
 ## Prepare the software for the electronic boards 🔧💻
 If you are OK with controlling the robot from your smartphone, configure the
 project with
 
-`make config-ap`
+`just config-ap`
 
 Otherwise, if you want to control the robot from your computer, configure the
 project with
 
-`make config`
+`just config`
 
 You will be requested to enter your router `SSID` and password.
 
 This procedure works only from `Linux` or `Unix` operating systems. If you are
-on `Windows`, you have to manually perform what the `make config` command is
+on `Windows`, you have to manually perform what the `just config` command is
 doing.
 
 Once configured and patched, upload **ELEGOO** software to the main board and

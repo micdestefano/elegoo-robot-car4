@@ -11,14 +11,14 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y make
+          sudo apt install -y just
       - name: Checkout sources
         uses: actions/checkout@v6
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v7
       - name: Initialize the working copy
         run: |
-          make init
+          just init
       - name: Build and publish to PyPI
         run: |
-          make publish
+          just publish

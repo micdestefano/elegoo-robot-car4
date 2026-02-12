@@ -12,14 +12,14 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y make
+          sudo apt install -y just
       - name: Checkout sources
         uses: actions/checkout@v6
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v7
       - name: Setup test environment
         run: |
-          make init-test
+          just init-test
       - name: Run tests and produce code coverage
         run: |
-          make test
+          just test
