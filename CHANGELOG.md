@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.1]
+- Now `ruff` and `prek` are run through `uvx` so they're not dependencies
+  anymore.
+
+## [1.0.1] - 2026-02-13
 
 ### Changed
 
@@ -55,4 +58,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Some fixes to `pyproject.toml`.
 
 ## [0.1.0] - 2026-01-19
+
 First release.

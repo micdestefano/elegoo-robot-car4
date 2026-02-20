@@ -93,13 +93,15 @@ check-uv:
 
 # Runs a linter on the whole sources
 lint: check-uv
-    uv run ruff check --fix src
-    uv run ruff check --fix tests
+    uvx ruff check --fix src
+    uvx ruff check --fix tests
+    uvx rumdl check .
 
 # Runs a formatter on the whole sources
 format: check-uv
-    uv run ruff format src
-    uv run ruff format tests
+    uvx ruff format src
+    uvx ruff format tests
+    uvx rumdl fmt .
 
 # Runs all the tests for Python code and produces a code coverage report.
 test:
@@ -112,7 +114,7 @@ checklist: lint format test
 init-dev: check-uv
     @echo "Creating dev .venv"
     uv sync --group dev --group test
-    uv run prek install -f --hook-type pre-commit --hook-type pre-push
+    uvx prek install -f --hook-type pre-commit --hook-type pre-push
 
 # Configures the project with dependencies for running and testing the code.
 init-test: check-uv
@@ -127,12 +129,12 @@ init: check-uv
 # Updates all prek git hooks to their latest version.
 update-hooks: check-uv
     @echo "Updating prek git hooks"
-    uv run prek auto-update
+    uvx prek auto-update
 
 # Forces a prek run on all files and not only on changed files.
 prek-all-files: check-uv
     @echo "Running prek hooks on all files"
-    uv run prek run --all-files
+    uvx prek run --all-files
 
 # Tags the current commit with the version number taken from the pyproject.toml file.
 tag: check-uv
